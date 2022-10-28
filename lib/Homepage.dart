@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:xo_moble_app/Winner.dart';
 import 'package:xo_moble_app/Xo_Gamepage.dart';
 
 class Homepage extends StatefulWidget {
@@ -153,6 +154,66 @@ class _HomepageState extends State<Homepage> {
                 )
               ],
             ),
+            Expanded(
+              child: FutureBuilder<List<Winner>>(
+                  future: DatabaseHelper.instance.getWinner(),
+                  builder: (
+                    BuildContext context,
+                    AsyncSnapshot<List<Winner>> snapshot,
+                  ) {
+                    if (!snapshot.hasData) {
+                      return Center(
+                        child: Text('Loading.....'),
+                      );
+                    }
+                    return snapshot.data!.isEmpty
+                        ? Column(
+                            children: [
+                              Center(
+                                child: Text("No Winner in List"),
+                              ),
+                            ],
+                          )
+                        : ListView(
+                            children: snapshot.data!.map((Winner) {
+                              return Column(
+                                children: [
+                                  Center(
+                                      child: ListTile(
+                                    title: Text("\n" +
+                                        Winner.id.toString() +
+                                        Winner.size.toString() +
+                                        "X" +
+                                        Winner.size.toString() +
+                                        "\n" +
+                                        Winner.winner.toString() +
+                                        "\nวันที่ " +
+                                        Winner.date!.day.toString() +
+                                        "-" +
+                                        Winner.date!.month.toString() +
+                                        "-" +
+                                        Winner.date!.month.toString() +
+                                        " เวลา " +
+                                        Winner.date!.hour.toString() +
+                                        "." +
+                                        Winner.date!.minute.toString()),
+                                    onTap: () {
+                                      setState(() {
+                                        DatabaseHelper.instance
+                                            .remove(Winner.id!);
+                                      });
+                                    },
+                                  )),
+                                  Text("----------------------------")
+                                ],
+                              );
+                            }).toList(),
+                          );
+                  }),
+            ),
+            FloatingActionButton(onPressed: () async {
+              await DatabaseHelper.deleteTable("Winner");
+            })
           ],
         ),
       ), // This trailing comma makes auto-formatting nicer for build methods.
