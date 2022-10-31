@@ -35,7 +35,7 @@ class Winner {
 
 class Condition {
   String? id;
-  String? position;
+  int? position;
   String? symbol;
 
   Condition({this.id, this.position, this.symbol});
@@ -63,6 +63,7 @@ class DatabaseHelper {
   Future<Database> _initDatabase() async {
     Directory documentDirectory = await getApplicationDocumentsDirectory();
     String path = join(documentDirectory.path, 'winner.db');
+    print(path);
     return await openDatabase(
       path,
       version: 1,
@@ -82,7 +83,7 @@ class DatabaseHelper {
     await db.execute('''
   CREATE TABLE Condition(
     id TEXT ,
-    position TEXT ,
+    position INT ,
     symbol TEXT,
     PRIMARY KEY (id, position)
     )
@@ -100,66 +101,62 @@ class DatabaseHelper {
   }
 
   List<Condition> ListCondition = [];
-  Future<List<Condition>> getCondition() async {
+  Future<List<Condition>> getCondition(String? id) async {
     Database db = await instance.database;
-    var text_Condition = await db.query('Condition');
+    var text_Condition = await db.query(
+      'Condition',
+      where: "id = ${id}",
+    );
     ListCondition = text_Condition.isNotEmpty
         ? text_Condition.map((e) => Condition.fromMap(e)).toList()
         : [];
     return ListCondition;
   }
 
-  Future<int> add(Winner winner) async {
-    Database db = await instance.database;
-    if (ListWinner.length > 0) {
-      if (ListWinner.length < 10) {
-        int id = ListWinner.length + 1;
-        winner.id = "00" + id.toString();
-      } else if (ListWinner.length < 100) {
-        int id = ListWinner.length + 1;
-        winner.id = "0" + id.toString();
-      }
-
-      DateTime _dateTime = DateTime.now();
-
-      winner.date = _dateTime;
-      return await db.insert('winner', winner.toMap());
-    } else {
-      winner.id = "001";
-      DateTime _dateTime = DateTime.now();
-      winner.date = _dateTime;
-
-      return await db.insert('winner', winner.toMap());
-    }
-  }
-
-  void add2(Winner winner, List<String> showXO) async {
+  void add(Winner winner, List<String> showXO) async {
     Condition c = Condition();
     Database db = await instance.database;
+    ListWinner = await DatabaseHelper.instance.getWinner();
+    print(ListWinner.length);
     if (ListWinner.length > 0) {
-      if (ListWinner.length < 10) {
-        int id = ListWinner.length + 1;
-        winner.id = "00" + id.toString();
-      } else if (ListWinner.length < 100) {
-        int id = ListWinner.length + 1;
-        winner.id = "0" + id.toString();
-      }
+      String t_id = ListWinner.last.id.toString();
+      int id = int.parse(t_id);
+      int t = id + 1;
+      winner.id = t.toString();
 
-      DateTime _dateTime = DateTime.now();
-
-      winner.date = _dateTime;
-      await db.insert('winner', winner.toMap());
-    } else {
-      winner.id = "001";
       DateTime _dateTime = DateTime.now();
       winner.date = _dateTime;
       await db.insert('winner', winner.toMap());
       //condition
       c.id = winner.id;
-      for (int i = 1; i <= showXO.length; i++) {
-        c.position = i.toString();
-        c.symbol = showXO[i];
-        await db.insert('condition', c.toMap());
+      for (int i = 0; i < showXO.length; i++) {
+        c.position = i;
+        if (showXO[i] == "") {
+          c.symbol = "";
+        } else {
+          c.symbol = showXO[i];
+        }
+
+        await db.insert('condition', c.toMap(),
+            conflictAlgorithm: ConflictAlgorithm.replace);
+      }
+    } else {
+      winner.id = "100";
+      DateTime _dateTime = DateTime.now();
+      winner.date = _dateTime;
+      await db.insert('winner', winner.toMap());
+      //condition
+      c.id = winner.id;
+      for (int i = 0; i < showXO.length; i++) {
+        c.position = i;
+        if (showXO[i] == "") {
+          c.symbol = "";
+        } else {
+          c.symbol = showXO[i];
+        }
+
+        await db.insert('condition', c.toMap(),
+            conflictAlgorithm: ConflictAlgorithm.replace);
       }
     }
   }

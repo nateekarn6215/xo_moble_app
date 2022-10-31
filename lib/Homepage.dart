@@ -3,6 +3,7 @@ import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:xo_moble_app/Winner.dart';
 import 'package:xo_moble_app/Xo_Gamepage.dart';
+import 'package:xo_moble_app/Xo_Gamepage_detail.dart';
 
 class Homepage extends StatefulWidget {
   const Homepage({super.key});
@@ -19,9 +20,6 @@ class _HomepageState extends State<Homepage> {
     return Scaffold(
       body: Container(
         child: Column(
-          /*
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,*/
           children: [
             Stack(
               children: [
@@ -51,7 +49,6 @@ class _HomepageState extends State<Homepage> {
             ),
             Stack(
               children: [
-                _backgroundImage2(),
                 Column(
                   children: [
                     Align(
@@ -169,8 +166,12 @@ class _HomepageState extends State<Homepage> {
                     return snapshot.data!.isEmpty
                         ? Column(
                             children: [
+                              SizedBox(height: 20),
                               Center(
-                                child: Text("No Winner in List"),
+                                child: Text(
+                                  "No Winner in List",
+                                  style: TextStyle(fontSize: 25),
+                                ),
                               ),
                             ],
                           )
@@ -181,27 +182,43 @@ class _HomepageState extends State<Homepage> {
                                   Center(
                                       child: ListTile(
                                     title: Text("\n" +
+                                        "รหัสการแข่งขัน :" +
                                         Winner.id.toString() +
+                                        "\nขนาดที่เล่น : " +
                                         Winner.size.toString() +
                                         "X" +
                                         Winner.size.toString() +
                                         "\n" +
+                                        "ผลการแข่งขัน : " +
                                         Winner.winner.toString() +
                                         "\nวันที่ " +
                                         Winner.date!.day.toString() +
                                         "-" +
                                         Winner.date!.month.toString() +
                                         "-" +
-                                        Winner.date!.month.toString() +
+                                        Winner.date!.year.toString() +
                                         " เวลา " +
                                         Winner.date!.hour.toString() +
                                         "." +
                                         Winner.date!.minute.toString()),
                                     onTap: () {
+                                      /*
                                       setState(() {
                                         DatabaseHelper.instance
                                             .remove(Winner.id!);
-                                      });
+                                      });*/
+
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                Xo_Gamepage_detail(
+                                                    size:
+                                                        Winner.size.toString(),
+                                                    id: Winner.id.toString(),
+                                                    result: Winner.winner
+                                                        .toString())),
+                                      );
                                     },
                                   )),
                                   Text("----------------------------")
@@ -211,9 +228,15 @@ class _HomepageState extends State<Homepage> {
                           );
                   }),
             ),
-            FloatingActionButton(onPressed: () async {
-              await DatabaseHelper.deleteTable("Winner");
-            })
+            FloatingActionButton.extended(
+                onPressed: () async {
+                  await DatabaseHelper.deleteTable("Winner");
+                  FocusScope.of(context).unfocus();
+                },
+                label: Text('ลบข้อมูลทั้งหมด')),
+            SizedBox(
+              height: 20,
+            )
           ],
         ),
       ), // This trailing comma makes auto-formatting nicer for build methods.
@@ -270,22 +293,6 @@ class _HomepageState extends State<Homepage> {
           height: 70,
           color: Colors.blue,
         )
-      ],
-
-      //
-    );
-  }
-
-  Widget _backgroundImage2() {
-    return Stack(
-      children: [
-        /*
-        Image(
-          height: 583,
-          width: 600,
-          image: AssetImage('images/พื้นหลังลายตารางสีฟ้าสด.jpg'),
-          fit: BoxFit.fill,
-        ),*/
       ],
 
       //

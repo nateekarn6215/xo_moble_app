@@ -8,6 +8,7 @@ import 'package:path_provider/path_provider.dart';
 
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:xo_moble_app/Homepage.dart';
 import 'package:xo_moble_app/Winner.dart';
 
 class Xo_Gamepage extends StatefulWidget {
@@ -35,6 +36,7 @@ class _Xo_GamepageState extends State<Xo_Gamepage> {
   String result = "";
   bool winnerFound = false;
   double fontSize = 0;
+  int check = 0;
 
   //
   String size = "";
@@ -93,7 +95,15 @@ class _Xo_GamepageState extends State<Xo_Gamepage> {
                                           children: [
                                             GestureDetector(
                                               onTap: () {
-                                                Navigator.of(context).pop();
+                                                if (check == 0)
+                                                  Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            Homepage()),
+                                                  );
+                                                else
+                                                  null;
                                               },
                                               child: Container(
                                                   padding:
@@ -239,7 +249,13 @@ class _Xo_GamepageState extends State<Xo_Gamepage> {
           _checkwinner5X5();
         }
       });
-      print(fillbox);
+      if (result == "Draw !!" ||
+          result == "Player X Winner !!" ||
+          result == "Player O Winner !!") {
+        setState(() {
+          check = 0;
+        });
+      }
     }
   }
 
@@ -255,7 +271,8 @@ class _Xo_GamepageState extends State<Xo_Gamepage> {
         matchIndex.addAll([0, 1, 2, 3]);
         stopTimer();
       });
-      await DatabaseHelper.instance.add(Winner(winner: result));
+      size = widget.size;
+      DatabaseHelper.instance.add(Winner(winner: result, size: size), show_X_O);
     }
     //check row 2
     if (show_X_O[4] == show_X_O[5] &&
@@ -268,7 +285,8 @@ class _Xo_GamepageState extends State<Xo_Gamepage> {
         matchIndex.addAll([4, 5, 6, 7]);
         stopTimer();
       });
-      await DatabaseHelper.instance.add(Winner(winner: result));
+      size = widget.size;
+      DatabaseHelper.instance.add(Winner(winner: result, size: size), show_X_O);
     }
     //check row 3
     if (show_X_O[8] == show_X_O[9] &&
@@ -281,7 +299,8 @@ class _Xo_GamepageState extends State<Xo_Gamepage> {
         matchIndex.addAll([8, 9, 10, 11]);
         stopTimer();
       });
-      await DatabaseHelper.instance.add(Winner(winner: result));
+      size = widget.size;
+      DatabaseHelper.instance.add(Winner(winner: result, size: size), show_X_O);
     }
     //check row 4
     if (show_X_O[12] == show_X_O[13] &&
@@ -294,7 +313,8 @@ class _Xo_GamepageState extends State<Xo_Gamepage> {
         matchIndex.addAll([12, 13, 14, 15]);
         stopTimer();
       });
-      await DatabaseHelper.instance.add(Winner(winner: result));
+      size = widget.size;
+      DatabaseHelper.instance.add(Winner(winner: result, size: size), show_X_O);
     }
 
     //check Column 1
@@ -308,7 +328,8 @@ class _Xo_GamepageState extends State<Xo_Gamepage> {
         matchIndex.addAll([0, 4, 8, 12]);
         stopTimer();
       });
-      await DatabaseHelper.instance.add(Winner(winner: result));
+      size = widget.size;
+      DatabaseHelper.instance.add(Winner(winner: result, size: size), show_X_O);
     }
     //check Column 2
     if (show_X_O[1] == show_X_O[5] &&
@@ -321,7 +342,8 @@ class _Xo_GamepageState extends State<Xo_Gamepage> {
         matchIndex.addAll([1, 5, 9, 13]);
         stopTimer();
       });
-      await DatabaseHelper.instance.add(Winner(winner: result));
+      size = widget.size;
+      DatabaseHelper.instance.add(Winner(winner: result, size: size), show_X_O);
     }
     //check Column 3
     if (show_X_O[2] == show_X_O[6] &&
@@ -334,7 +356,8 @@ class _Xo_GamepageState extends State<Xo_Gamepage> {
         matchIndex.addAll([2, 6, 10, 14]);
         stopTimer();
       });
-      await DatabaseHelper.instance.add(Winner(winner: result));
+      size = widget.size;
+      DatabaseHelper.instance.add(Winner(winner: result, size: size), show_X_O);
     }
     //check Column 4
     if (show_X_O[3] == show_X_O[7] &&
@@ -347,7 +370,8 @@ class _Xo_GamepageState extends State<Xo_Gamepage> {
         matchIndex.addAll([3, 7, 11, 15]);
         stopTimer();
       });
-      await DatabaseHelper.instance.add(Winner(winner: result));
+      size = widget.size;
+      DatabaseHelper.instance.add(Winner(winner: result, size: size), show_X_O);
     }
 
     //check Left to right
@@ -361,7 +385,8 @@ class _Xo_GamepageState extends State<Xo_Gamepage> {
         matchIndex.addAll([0, 5, 10, 15]);
         stopTimer();
       });
-      await DatabaseHelper.instance.add(Winner(winner: result));
+      size = widget.size;
+      DatabaseHelper.instance.add(Winner(winner: result, size: size), show_X_O);
     }
     //check right to Left
     if (show_X_O[3] == show_X_O[6] &&
@@ -374,7 +399,8 @@ class _Xo_GamepageState extends State<Xo_Gamepage> {
         matchIndex.addAll([3, 6, 9, 12]);
         stopTimer();
       });
-      await DatabaseHelper.instance.add(Winner(winner: result));
+      size = widget.size;
+      DatabaseHelper.instance.add(Winner(winner: result, size: size), show_X_O);
     }
 
     if (!winnerFound && fillbox == 16) {
@@ -382,14 +408,16 @@ class _Xo_GamepageState extends State<Xo_Gamepage> {
         result = 'Draw !!';
         stopTimer();
       });
-      await DatabaseHelper.instance.add(Winner(winner: result));
+      size = widget.size;
+      DatabaseHelper.instance.add(Winner(winner: result, size: size), show_X_O);
     }
     if (seconds == 0) {
       setState(() {
         result = 'Draw !!';
         stopTimer();
       });
-      await DatabaseHelper.instance.add(Winner(winner: result));
+      size = widget.size;
+      DatabaseHelper.instance.add(Winner(winner: result, size: size), show_X_O);
     }
   }
 
@@ -404,10 +432,9 @@ class _Xo_GamepageState extends State<Xo_Gamepage> {
         stopTimer();
         _updateScore(show_X_O[0]);
       });
-      size = size = widget.size;
-      //await DatabaseHelper.instance.add(Winner(winner: result, size: size));
-      DatabaseHelper.instance
-          .add2(Winner(winner: result, size: size), show_X_O);
+      size = widget.size;
+
+      DatabaseHelper.instance.add(Winner(winner: result, size: size), show_X_O);
     }
     //check row 2
     if (show_X_O[3] == show_X_O[4] &&
@@ -419,7 +446,8 @@ class _Xo_GamepageState extends State<Xo_Gamepage> {
         stopTimer();
         _updateScore(show_X_O[3]);
       });
-      await DatabaseHelper.instance.add(Winner(winner: result));
+      size = widget.size;
+      DatabaseHelper.instance.add(Winner(winner: result, size: size), show_X_O);
     }
     //check row 3
     if (show_X_O[6] == show_X_O[7] &&
@@ -431,7 +459,8 @@ class _Xo_GamepageState extends State<Xo_Gamepage> {
         stopTimer();
         _updateScore(show_X_O[6]);
       });
-      await DatabaseHelper.instance.add(Winner(winner: result));
+      size = widget.size;
+      DatabaseHelper.instance.add(Winner(winner: result, size: size), show_X_O);
     }
     //check Column 1
     if (show_X_O[0] == show_X_O[3] &&
@@ -443,7 +472,8 @@ class _Xo_GamepageState extends State<Xo_Gamepage> {
         stopTimer();
         _updateScore(show_X_O[0]);
       });
-      await DatabaseHelper.instance.add(Winner(winner: result));
+      size = widget.size;
+      DatabaseHelper.instance.add(Winner(winner: result, size: size), show_X_O);
     }
     //check Column 2
     if (show_X_O[1] == show_X_O[4] &&
@@ -455,7 +485,8 @@ class _Xo_GamepageState extends State<Xo_Gamepage> {
         stopTimer();
         _updateScore(show_X_O[1]);
       });
-      await DatabaseHelper.instance.add(Winner(winner: result));
+      size = widget.size;
+      DatabaseHelper.instance.add(Winner(winner: result, size: size), show_X_O);
     }
     //check Column 3
     if (show_X_O[2] == show_X_O[5] &&
@@ -467,7 +498,8 @@ class _Xo_GamepageState extends State<Xo_Gamepage> {
         stopTimer();
         _updateScore(show_X_O[2]);
       });
-      await DatabaseHelper.instance.add(Winner(winner: result));
+      size = widget.size;
+      DatabaseHelper.instance.add(Winner(winner: result, size: size), show_X_O);
     }
     //check left to right
     if (show_X_O[0] == show_X_O[4] &&
@@ -479,7 +511,8 @@ class _Xo_GamepageState extends State<Xo_Gamepage> {
         stopTimer();
         _updateScore(show_X_O[0]);
       });
-      await DatabaseHelper.instance.add(Winner(winner: result));
+      size = widget.size;
+      DatabaseHelper.instance.add(Winner(winner: result, size: size), show_X_O);
     }
     //check right to left
     if (show_X_O[2] == show_X_O[4] &&
@@ -491,23 +524,28 @@ class _Xo_GamepageState extends State<Xo_Gamepage> {
         stopTimer();
         _updateScore(show_X_O[2]);
       });
-      await DatabaseHelper.instance.add(Winner(winner: result));
+      size = widget.size;
+      DatabaseHelper.instance.add(Winner(winner: result, size: size), show_X_O);
     }
 
     if (!winnerFound && fillbox == 9) {
       setState(() {
-        result = 'Draw  !!';
-        stopTimer();
-      });
-      await DatabaseHelper.instance.add(Winner(winner: result));
-    }
-
-    if (seconds == 0) {
-      setState(() {
         result = 'Draw !!';
         stopTimer();
       });
-      await DatabaseHelper.instance.add(Winner(winner: result));
+      size = widget.size;
+      DatabaseHelper.instance.add(Winner(winner: result, size: size), show_X_O);
+    }
+
+    if (seconds < 1) {
+      setState(() {
+        result = 'Draw !!';
+
+        stopTimer();
+      });
+      print(1150);
+      size = widget.size;
+      DatabaseHelper.instance.add(Winner(winner: result, size: size), show_X_O);
     }
   }
 
@@ -524,7 +562,8 @@ class _Xo_GamepageState extends State<Xo_Gamepage> {
         matchIndex.addAll([0, 1, 2, 3, 4]);
         stopTimer();
       });
-      await DatabaseHelper.instance.add(Winner(winner: result));
+      size = widget.size;
+      DatabaseHelper.instance.add(Winner(winner: result, size: size), show_X_O);
     }
     //check row 2
     if (show_X_O[5] == show_X_O[6] &&
@@ -538,7 +577,8 @@ class _Xo_GamepageState extends State<Xo_Gamepage> {
         matchIndex.addAll([5, 6, 7, 8, 9]);
         stopTimer();
       });
-      await DatabaseHelper.instance.add(Winner(winner: result));
+      size = widget.size;
+      DatabaseHelper.instance.add(Winner(winner: result, size: size), show_X_O);
     }
     //check row 3
     if (show_X_O[10] == show_X_O[11] &&
@@ -552,7 +592,8 @@ class _Xo_GamepageState extends State<Xo_Gamepage> {
         matchIndex.addAll([10, 11, 12, 13, 14]);
         stopTimer();
       });
-      await DatabaseHelper.instance.add(Winner(winner: result));
+      size = widget.size;
+      DatabaseHelper.instance.add(Winner(winner: result, size: size), show_X_O);
     }
     //check row 4
     if (show_X_O[15] == show_X_O[16] &&
@@ -566,7 +607,8 @@ class _Xo_GamepageState extends State<Xo_Gamepage> {
         matchIndex.addAll([15, 16, 17, 18, 19]);
         stopTimer();
       });
-      await DatabaseHelper.instance.add(Winner(winner: result));
+      size = widget.size;
+      DatabaseHelper.instance.add(Winner(winner: result, size: size), show_X_O);
     }
     //check row 5
     if (show_X_O[20] == show_X_O[21] &&
@@ -580,7 +622,8 @@ class _Xo_GamepageState extends State<Xo_Gamepage> {
         matchIndex.addAll([20, 21, 22, 23, 24]);
         stopTimer();
       });
-      await DatabaseHelper.instance.add(Winner(winner: result));
+      size = widget.size;
+      DatabaseHelper.instance.add(Winner(winner: result, size: size), show_X_O);
     }
     //check Column 1
     if (show_X_O[0] == show_X_O[5] &&
@@ -594,7 +637,8 @@ class _Xo_GamepageState extends State<Xo_Gamepage> {
         matchIndex.addAll([0, 5, 10, 15, 20]);
         stopTimer();
       });
-      await DatabaseHelper.instance.add(Winner(winner: result));
+      size = widget.size;
+      DatabaseHelper.instance.add(Winner(winner: result, size: size), show_X_O);
     }
     //check Column 2
     if (show_X_O[1] == show_X_O[6] &&
@@ -608,7 +652,8 @@ class _Xo_GamepageState extends State<Xo_Gamepage> {
         matchIndex.addAll([1, 6, 11, 16, 21]);
         stopTimer();
       });
-      await DatabaseHelper.instance.add(Winner(winner: result));
+      size = widget.size;
+      DatabaseHelper.instance.add(Winner(winner: result, size: size), show_X_O);
     }
     //check Column 3
     if (show_X_O[2] == show_X_O[7] &&
@@ -622,21 +667,23 @@ class _Xo_GamepageState extends State<Xo_Gamepage> {
         matchIndex.addAll([2, 7, 12, 17, 22]);
         stopTimer();
       });
-      await DatabaseHelper.instance.add(Winner(winner: result));
+      size = widget.size;
+      DatabaseHelper.instance.add(Winner(winner: result, size: size), show_X_O);
     }
     //check Column 4
-    if (show_X_O[3] == show_X_O[5] &&
-        show_X_O[3] == show_X_O[10] &&
-        show_X_O[3] == show_X_O[15] &&
-        show_X_O[3] == show_X_O[20] &&
+    if (show_X_O[3] == show_X_O[8] &&
+        show_X_O[3] == show_X_O[13] &&
+        show_X_O[3] == show_X_O[18] &&
+        show_X_O[3] == show_X_O[23] &&
         show_X_O[3] != '') {
       setState(() {
         result = 'Player ' + show_X_O[3] + ' Winner !!';
         _updateScore(show_X_O[3]);
-        matchIndex.addAll([3, 5, 10, 15, 20]);
+        matchIndex.addAll([3, 8, 13, 18, 23]);
         stopTimer();
       });
-      await DatabaseHelper.instance.add(Winner(winner: result));
+      size = widget.size;
+      DatabaseHelper.instance.add(Winner(winner: result, size: size), show_X_O);
     }
     //check Column 5
     if (show_X_O[4] == show_X_O[9] &&
@@ -647,10 +694,11 @@ class _Xo_GamepageState extends State<Xo_Gamepage> {
       setState(() {
         result = 'Player ' + show_X_O[4] + ' Winner !!';
         _updateScore(show_X_O[4]);
-        matchIndex.addAll([9, 14, 19, 24]);
+        matchIndex.addAll([4, 9, 14, 19, 24]);
         stopTimer();
       });
-      await DatabaseHelper.instance.add(Winner(winner: result));
+      size = widget.size;
+      DatabaseHelper.instance.add(Winner(winner: result, size: size), show_X_O);
     }
     //check left to right
     if (show_X_O[0] == show_X_O[6] &&
@@ -661,10 +709,11 @@ class _Xo_GamepageState extends State<Xo_Gamepage> {
       setState(() {
         result = 'Player ' + show_X_O[0] + ' Winner !!';
         _updateScore(show_X_O[0]);
-        matchIndex.addAll([6, 12, 18, 24]);
+        matchIndex.addAll([0, 6, 12, 18, 24]);
         stopTimer();
       });
-      await DatabaseHelper.instance.add(Winner(winner: result));
+      size = widget.size;
+      DatabaseHelper.instance.add(Winner(winner: result, size: size), show_X_O);
     }
     //check right to left
     if (show_X_O[4] == show_X_O[8] &&
@@ -678,21 +727,24 @@ class _Xo_GamepageState extends State<Xo_Gamepage> {
         matchIndex.addAll([4, 8, 12, 16, 20]);
         stopTimer();
       });
-      await DatabaseHelper.instance.add(Winner(winner: result));
+      size = widget.size;
+      DatabaseHelper.instance.add(Winner(winner: result, size: size), show_X_O);
     }
     if (!winnerFound && fillbox == 25) {
       setState(() {
         result = 'Draw !!';
         stopTimer();
       });
-      await DatabaseHelper.instance.add(Winner(winner: result));
+      size = size = widget.size;
+      DatabaseHelper.instance.add(Winner(winner: result, size: size), show_X_O);
     }
     if (seconds == 0) {
       setState(() {
         result = 'Draw !!';
         stopTimer();
       });
-      await DatabaseHelper.instance.add(Winner(winner: result));
+      size = widget.size;
+      DatabaseHelper.instance.add(Winner(winner: result, size: size), show_X_O);
     }
   }
 
@@ -747,11 +799,18 @@ class _Xo_GamepageState extends State<Xo_Gamepage> {
             seconds--;
           });
       } else if (seconds < 1) {
-        if (mounted)
-          setState(() {
-            result = "draw !!";
-          });
         stopTimer();
+        size = widget.size;
+        setState(() {
+          result = "Draw !!";
+        });
+
+        setState(() {
+          check = 0;
+        });
+
+        DatabaseHelper.instance
+            .add(Winner(winner: result, size: size), show_X_O);
       }
     });
   }
@@ -798,6 +857,11 @@ class _Xo_GamepageState extends State<Xo_Gamepage> {
                     startTimer();
                     _clearBoard();
                     attempts++;
+                    setState(() {
+                      if (check == 0) {
+                        check = 1;
+                      }
+                    });
                   },
                   style: ElevatedButton.styleFrom(
                     primary: Colors.yellow,
